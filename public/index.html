@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Native Module</title>
+  <script>
+    async function startLoops() {
+      try {
+        const response = await fetch('http://localhost:3000/native/startLoops');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.text();
+        document.getElementById('status').innerText = result;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function getPIDs() {
+      try {
+        const response = await fetch('http://localhost:3000/native/pids');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        document.getElementById('pids').innerText = JSON.stringify(result);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function getIteration(loopNumber) {
+      try {
+        const response = await fetch(`http://localhost:3000/native/iteration/${loopNumber}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.text();
+        document.getElementById(`iteration${loopNumber}`).innerText = result;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Native Module</h1>
+  <button onclick="startLoops()">Start Loops</button>
+  <p id="status"></p>
+  <button onclick="getPIDs()">Get PIDs</button>
+  <p id="pids"></p>
+  <div>
+    <h2>Iterations</h2>
+    <div>
+      <button onclick="getIteration(1)">Get Iteration 1</button>
+      <p id="iteration1"></p>
+    </div>
+    <div>
+      <button onclick="getIteration(2)">Get Iteration 2</button>
+      <p id="iteration2"></p>
+    </div>
+    <div>
+      <button onclick="getIteration(3)">Get Iteration 3</button>
+      <p id="iteration3"></p>
+    </div>
+  </div>
+</body>
+</html>
