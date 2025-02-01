@@ -59,10 +59,15 @@ Napi::Value GetIteration(const Napi::CallbackInfo &info)
 
     pid_t pid = getpid(); // Obtener el PID del proceso
 
-    std::ostringstream oss;
-    oss << "Iteration: " << iteration << ", Thread ID: " << threadId << ", PID: " << pid;
+    std::stringstream ss;
+    ss << threadId;
 
-    return Napi::String::New(env, oss.str());
+    Napi::Object result = Napi::Object::New(env);
+    result.Set("iteration", Napi::Number::New(env, iteration));
+    result.Set("threadId", Napi::String::New(env, ss.str()));
+    result.Set("pid", Napi::Number::New(env, pid));
+
+    return result;
 }
 
 Napi::Value GetPIDs(const Napi::CallbackInfo &info)
