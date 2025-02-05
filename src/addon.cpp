@@ -1,77 +1,78 @@
 #include <napi.h>
-#include <thread>
 #include <atomic>
 #include <chrono>
 #include <sstream>
 #include <unistd.h> // Para obtener el PID
+#include <mutex>
 
 std::atomic<int> iteration1(0);
 std::atomic<int> iteration2(0);
 std::atomic<int> iteration3(0);
 
-std::atomic<std::thread::id> threadId1;
-std::atomic<std::thread::id> threadId2;
-std::atomic<std::thread::id> threadId3;
+std::mutex threadIdMutex1;
+std::mutex threadIdMutex2;
+std::mutex threadIdMutex3;
 
-void runLoop(std::atomic<int> &iteration, std::atomic<std::thread::id> &threadId)
-{
-    threadId = std::this_thread::get_id();
-    for (int i = 0; i < 10000000; ++i)
-    {
-        iteration = i;
-        std::this_thread::sleep_for(std::chrono::seconds(1)); // Agregar un retraso de 1 segundo
+class LoopWorker : public Napi::AsyncWorker {
+public:
+    LoopWorker(Napi::Function& callback, std::atomic<int>& iteration, std::mutex& threadIdMutex)
+        : Napi::AsyncWorker(callback), iteration(iteration), threadIdMutex(threadIdMutex) {}
+
+    void Execute() override {
+        for (int i = 0; i < 10000000; ++i) {
+            iteration = i;
+            // Reemplazar std::this_thread::sleep_for con una alternativa
+            usleep(1000); // Agregar un retraso de 1 milisegundo
+        }
     }
-}
 
-Napi::Value StartLoops(const Napi::CallbackInfo &info)
-{
+    void OnOK() override {
+        Napi::HandleScope scope(Env());
+        Callback().Call({Env().Null(), Napi::String::New(Env(), "Loop completed")});
+    }
+
+private:
+    std::atomic<int>& iteration;
+    std::mutex& threadIdMutex;
+};
+
+Napi::Value StartLoops(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    std::thread t1(runLoop, std::ref(iteration1), std::ref(threadId1));
-    std::thread t2(runLoop, std::ref(iteration2), std::ref(threadId2));
-    std::thread t3(runLoop, std::ref(iteration3), std::ref(threadId3));
-    t1.detach();
-    t2.detach();
-    t3.detach();
+    Napi::Function callback = info[0].As<Napi::Function>();
+
+    LoopWorker* worker1 = new LoopWorker(callback, iteration1, threadIdMutex1);
+    LoopWorker* worker2 = new LoopWorker(callback, iteration2, threadIdMutex2);
+    LoopWorker* worker3 = new LoopWorker(callback, iteration3, threadIdMutex3);
+
+    worker1->Queue();
+    worker2->Queue();
+    worker3->Queue();
+
     return Napi::String::New(env, "Loops started");
 }
 
-Napi::Value GetIteration(const Napi::CallbackInfo &info)
-{
+Napi::Value GetIteration(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     int loopNumber = info[0].As<Napi::Number>().Int32Value();
     int iteration = 0;
-    std::thread::id threadId;
-    if (loopNumber == 1)
-    {
+    if (loopNumber == 1) {
         iteration = iteration1.load();
-        threadId = threadId1.load();
-    }
-    else if (loopNumber == 2)
-    {
+    } else if (loopNumber == 2) {
         iteration = iteration2.load();
-        threadId = threadId2.load();
-    }
-    else if (loopNumber == 3)
-    {
+    } else if (loopNumber == 3) {
         iteration = iteration3.load();
-        threadId = threadId3.load();
     }
 
     pid_t pid = getpid(); // Obtener el PID del proceso
 
-    std::stringstream ss;
-    ss << threadId;
-
     Napi::Object result = Napi::Object::New(env);
     result.Set("iteration", Napi::Number::New(env, iteration));
-    result.Set("threadId", Napi::String::New(env, ss.str()));
     result.Set("pid", Napi::Number::New(env, pid));
 
     return result;
 }
 
-Napi::Value GetPIDs(const Napi::CallbackInfo &info)
-{
+Napi::Value GetPIDs(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     pid_t pid = getpid(); // Obtener el PID del proceso
 
@@ -83,8 +84,7 @@ Napi::Value GetPIDs(const Napi::CallbackInfo &info)
     return pids;
 }
 
-Napi::Object Init(Napi::Env env, Napi::Object exports)
-{
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "startLoops"), Napi::Function::New(env, StartLoops));
     exports.Set(Napi::String::New(env, "getIteration"), Napi::Function::New(env, GetIteration));
     exports.Set(Napi::String::New(env, "getPIDs"), Napi::Function::New(env, GetPIDs));

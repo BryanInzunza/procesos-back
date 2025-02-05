@@ -12,7 +12,11 @@ export class NativeController {
   }
 
   @Get('iteration/:loopNumber')
-  getIteration(@Param('loopNumber', ParseIntPipe) loopNumber: number): { iteration: number, threadId: string, pid: number } {
+  getIteration(@Param('loopNumber', ParseIntPipe) loopNumber: number): {
+    iteration: number;
+    threadId: string;
+    pid: number;
+  } {
     return this.nativeService.getIteration(loopNumber);
   }
 
