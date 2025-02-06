@@ -4,6 +4,7 @@
 #include <sstream>
 #include <unistd.h> // Para obtener el PID
 #include <mutex>
+#include "CClass.hpp"
 
 std::atomic<int> iteration1(0);
 std::atomic<int> iteration2(0);
@@ -29,6 +30,9 @@ public:
     void OnOK() override {
         Napi::HandleScope scope(Env());
         Callback().Call({Env().Null(), Napi::String::New(Env(), "Loop completed")});
+        
+        CClass cl;
+        cl.method();
     }
 
 private:
