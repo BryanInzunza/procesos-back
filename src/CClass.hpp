@@ -1,4 +1,5 @@
-#define "CClass.hpp"
+#ifndef CCLASS_HPP
+#define CCLASS_HPP
 
 class CClass {
 public:
@@ -8,3 +9,5 @@ public:
 private:
     int iRet;
 };
+
+#endif // CCLASS_HPP

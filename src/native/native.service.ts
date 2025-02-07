@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 const addon = require('../../build/Release/addon');
 
 @Injectable()
@@ -38,4 +38,25 @@ export class NativeService {
   getPIDs(): number[] {
     return addon.getPIDs();
   }
+
+  resetIteration(loopNumber: number): void {
+    addon.resetIteration(loopNumber);
+  }
+
+  pauseIteration(loopNumber: number): string {
+    if (typeof loopNumber !== 'number') {
+      throw new TypeError('A number was expected');
+    }
+    const result = addon.pauseIteration(loopNumber);
+    return result.message;
+  }
+
+  resumeIteration(loopNumber: number): string {
+    if (typeof loopNumber !== 'number') {
+      throw new TypeError('A number was expected');
+    }
+    const result = addon.resumeIteration(loopNumber);
+    return result.message;
+  }
+
 }
