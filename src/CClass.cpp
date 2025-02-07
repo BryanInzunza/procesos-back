@@ -1,13 +1,14 @@
-CClass::CClass(),
-    iRet(0) 
-{
-    // Constructor
+#include "CClass.hpp"
+
+CClass::CClass() {
+    // Constructor implementation
 }
 
 CClass::~CClass() {
-    // Destructor
+    // Destructor implementation
 }
 
 int CClass::method() {
-    return 1*3;
+    // Method implementation
+    return 0;
 }

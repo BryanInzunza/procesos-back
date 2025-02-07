@@ -31,6 +31,10 @@ export class NativeService {
     return 'Loops started';
   }
 
+  pauseLoop(loopNumber: number, pause: boolean): string {
+    return addon.pauseLoop(loopNumber, pause);
+  }
+
   getIteration(loopNumber: number): { iteration: number; threadId: string; pid: number } {
     return addon.getIteration(loopNumber);
   }

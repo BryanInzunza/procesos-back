@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body } from '@nestjs/common';
 import { NativeService } from './native.service';
 
 @Controller('native')
@@ -23,5 +23,12 @@ export class NativeController {
   @Get('pids')
   getPIDs(): number[] {
     return this.nativeService.getPIDs();
+  }
+
+  @Post('pause-loop')
+  pauseLoop(@Body() body: { loopNumber: number; pause: boolean }): { message: string } {
+    const { loopNumber, pause } = body;
+    const message = this.nativeService.pauseLoop(loopNumber, pause);
+    return { message };
   }
 }

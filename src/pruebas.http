@@ -1,0 +1,14 @@
+### Pausar ciclo
+PUT  http://localhost:3000/native/pause-loop
+Content-Type: application/json
+
+{
+  "loopNumber": 1,
+  "pause": true
+}
+
+### Ver estado del ciclo
+GET http://localhost:3000/native/iteration/1
+
+### Iniciar ciclo
+GET  http://localhost:3000/native/start-loops
