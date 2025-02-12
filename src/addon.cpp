@@ -20,7 +20,7 @@ public:
         : Napi::AsyncWorker(callback), iteration(iteration), threadIdMutex(threadIdMutex), resetFlag(false), pauseFlag(false) {}
 
     void Execute() override {
-        for (int i = iteration.load(); i < 10000000; ++i) {
+        for (int i = iteration.load(); i < 100; ++i) {
             if (resetFlag.load()) {
                 iteration.store(0);
                 resetFlag.store(false);
@@ -30,7 +30,7 @@ public:
                 usleep(100000); // Esperar 100ms mientras está en pausa
             }
             iteration = i;
-            usleep(1000000); // Agregar un retraso de 1 segundo
+            usleep(500000); // Agregar un retraso de 1 segundo
         }
     }
 

@@ -1,0 +1,28 @@
+### Start Loops
+GET http://localhost:3000/native/start-loops
+
+### Get Iteration for Loop 1
+GET http://localhost:3000/native/iteration/1
+Content-Type: application/json
+
+### Reset Iteration for Loop 1
+PUT  http://localhost:3000/native/reset-iteration
+Content-Type: application/json
+
+{
+  "loopNumber": 1
+}
+
+
+### Pause Iteration
+GET http://localhost:3000/native/pause/1
+Content-Type: application/json
+
+### Resume Iteration
+POST http://localhost:3000/native/resume/1
+Content-Type: application/json
+
+### Get PIDs
+GET http://localhost:3000/native/pids
+Content-Type: application/json
+
