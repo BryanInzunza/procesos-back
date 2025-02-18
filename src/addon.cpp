@@ -156,7 +156,6 @@ Napi::Value PauseIteration(const Napi::CallbackInfo& info) {
 Napi::Value ResumeIteration(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     int loopNumber = info[0].As<Napi::Number>().Int32Value();
-
     if (loopNumber == 1 && worker1) {
         worker1->Resume();
         Napi::Object result = Napi::Object::New(env);
@@ -173,7 +172,6 @@ Napi::Value ResumeIteration(const Napi::CallbackInfo& info) {
         result.Set("message", Napi::String::New(env, "Iteration 3 resumed"));
         return result;
     }
-
     Napi::Object result = Napi::Object::New(env);
     result.Set("message", Napi::String::New(env, "Worker not found"));
     return result;

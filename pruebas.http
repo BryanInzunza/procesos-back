@@ -19,7 +19,7 @@ GET http://localhost:3000/native/pause/1
 Content-Type: application/json
 
 ### Resume Iteration
-POST http://localhost:3000/native/resume/1
+GET  http://localhost:3000/native/resume/1
 Content-Type: application/json
 
 ### Get PIDs

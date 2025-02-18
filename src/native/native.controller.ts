@@ -41,13 +41,14 @@ export class NativeController {
     }
   }
 
-  @Post('pause/:loopNumber')
+  @Get('pause/:loopNumber')
   pauseIteration(@Param('loopNumber', ParseIntPipe) loopNumber: number): { message: string } {
     const message = this.nativeService.pauseIteration(loopNumber);
+    console.log('Loop Paused');
     return { message };
   }
 
-  @Post('resume/:loopNumber')
+  @Get('resume/:loopNumber')
   resumeIteration(@Param('loopNumber', ParseIntPipe) loopNumber: number): { message: string } {
     const message = this.nativeService.resumeIteration(loopNumber);
     return { message };
